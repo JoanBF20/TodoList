@@ -13,12 +13,6 @@ public class Task {
         this.complete = complete;
     }
 
-    public Task(int codi, String title, boolean complete){
-        this.codi = codi;
-        this.title = title;
-        this.complete = complete;
-    }
-
     public int getCodi() {
         return codi;
     }
