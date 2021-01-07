@@ -2,17 +2,19 @@ package com.example.todolist;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
+
+        llista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Gson json = new Gson();
+                String tasca_seleccionada = json.toJson(tasks.get(position));
+                Intent nou = new Intent(getApplicationContext(), EditionTask.class);
+                nou.putExtra("Tasca",tasca_seleccionada);
+
+                Log.d("OJson",tasca_seleccionada);
+                startActivity(nou);
+
+            }
+        });
     }
 
     @Override
@@ -56,6 +73,27 @@ public class MainActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida", Toast.LENGTH_SHORT);
                 toast.show();
                 adapter.notifyDataSetChanged();
+
+                if(getIntent().getExtras() != null) {
+                    Task tasca = (Task) getIntent().getSerializableExtra("Modificat");
+                    for (int i = 0; i < tasks.size(); i++) {
+                        Task task = tasks.get(i);
+                        if (tasca.getCodi() == task.getCodi()){
+                            task.setTitle(tasca.getTitle());
+                            task.setDescription(tasca.getDescription());
+                        }
+                    }
+                }
+                if(getIntent().getExtras() != null) {
+                    String code = data.getStringExtra("Borrar");
+                    int cod = Integer.parseInt(code);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        Task task = tasks.get(i);
+                        if (cod == task.getCodi()){
+                            tasks.remove(i);
+                        }
+                    }
+                }
             }
         }
     }
