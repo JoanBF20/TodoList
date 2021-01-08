@@ -24,9 +24,7 @@ public class EditionTask extends AppCompatActivity {
         //Recollir informació del Intent i mostrar-la
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String recepcio = extras.getString("Tasca");
-            Gson json = new Gson();
-            Task tasca = json.fromJson(recepcio, Task.class);
+            Task tasca = (Task) getIntent().getSerializableExtra("Tasca");
             final int codi = tasca.getCodi();
             final String titolGeneral = tasca.getTitle();
             final String descripcio = tasca.getDescription();
@@ -47,7 +45,7 @@ public class EditionTask extends AppCompatActivity {
                     EditText titol = findViewById(R.id.title);
                     Task tasca = new Task(codi,titolGeneral,descripcio,completat);
                     Intent data = new Intent();
-                    data.putExtra("Modificat", (Serializable) tasca);
+                    data.putExtra("Modificat",  tasca);
                     setResult(RESULT_OK,data);
                     finish();
                 }

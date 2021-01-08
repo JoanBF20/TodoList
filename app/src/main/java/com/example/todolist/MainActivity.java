@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +47,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Gson json = new Gson();
-                String tasca_seleccionada = json.toJson(tasks.get(position));
                 Intent nou = new Intent(getApplicationContext(), EditionTask.class);
-                nou.putExtra("Tasca",tasca_seleccionada);
+                nou.putExtra("Tasca",tasks.get(position));
 
-                Log.d("OJson",tasca_seleccionada);
-                startActivity(nou);
+                startActivityForResult(nou, 1);
 
             }
         });
@@ -72,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida", Toast.LENGTH_SHORT);
                 toast.show();
+
                 adapter.notifyDataSetChanged();
 
                 if(getIntent().getExtras() != null) {
