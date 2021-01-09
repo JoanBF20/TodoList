@@ -23,44 +23,49 @@ public class EditionTask extends AppCompatActivity {
 
         //Recollir informació del Intent i mostrar-la
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            Task tasca = (Task) getIntent().getSerializableExtra("Tasca");
-            final int codi = tasca.getCodi();
-            final String titolGeneral = tasca.getTitle();
-            final String descripcio = tasca.getDescription();
-            final boolean completat = tasca.isComplete();
+        final int position = Integer.parseInt(extras.getString("Position"));
 
-            //instanciam cada element del layout a utilitzar
-            EditText title = (EditText) findViewById(R.id.title);
-            EditText description = (EditText) findViewById(R.id.description);
+        Task tasca = (Task) getIntent().getSerializableExtra("Tasca");
+        final String titolGeneral = tasca.getTitle();
+        final String descripcio = tasca.getDescription();
+        final boolean completat = tasca.isComplete();
 
-            //omplim les dades
-            title.setText(tasca.getTitle());
-            description.setText(tasca.getDescription());
+        //instanciam cada element del layout a utilitzar
+        EditText title = (EditText) findViewById(R.id.title);
+        EditText description = (EditText) findViewById(R.id.description);
 
-            Button guardar = (Button) findViewById(R.id.save);
-            guardar.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+        //omplim les dades
+        title.setText(tasca.getTitle());
+        description.setText(tasca.getDescription());
 
-                    EditText titol = findViewById(R.id.title);
-                    Task tasca = new Task(codi,titolGeneral,descripcio,completat);
-                    Intent data = new Intent();
-                    data.putExtra("Modificat",  tasca);
-                    setResult(RESULT_OK,data);
-                    finish();
-                }
-            });
+        Button guardar = (Button) findViewById(R.id.save);
+        guardar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
-            Button borrar = (Button) findViewById(R.id.delete);
-            borrar.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent data = new Intent();
-                    data.putExtra("Borrar", codi);
-                    setResult(RESULT_OK,data);
-                    finish();
-                }
-            });
-        }
+                EditText titol = findViewById(R.id.title);
+                String boto = "Editar";
+                Task tasca = new Task(titolGeneral,descripcio,completat);
+                Intent data = new Intent();
+                data.putExtra("ModificatObjecte",  tasca);
+                data.putExtra("ModificatString", boto);
+                data.putExtra("ModificatPosicio", position);
+                setResult(RESULT_OK,data);
+                finish();
+            }
+        });
+
+        Button borrar = (Button) findViewById(R.id.delete);
+        borrar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent data = new Intent();
+                String boto2 = "Borrar";
+                data.putExtra("Borrar", position);
+                data.putExtra("BorrarString", boto2);
+                setResult(RESULT_OK,data);
+                finish();
+            }
+        });
+
 
     }
 

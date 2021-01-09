@@ -2,6 +2,7 @@ package com.example.todolist;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tasks.add(new Task(1,"Task 1", "Description of Task 1", false));
-        tasks.add(new Task(2,"Task 2", "Description of Task 2", false));
+        tasks.add(new Task("Task 1", "Description of Task 1", false));
+        tasks.add(new Task( "Task 2", "Description of Task 2", false));
 
-        ListView llista = (ListView)findViewById(R.id.listview);
-        adapter = new taskadapter(getApplicationContext(),R.layout.activity_main,tasks);
+        ListView llista = (ListView) findViewById(R.id.listview);
+        adapter = new taskadapter(getApplicationContext(), R.layout.activity_main, tasks);
         llista.setAdapter((ListAdapter) adapter);
 
         FloatingActionButton myFab = (FloatingActionButton) this.findViewById(R.id.floatingAdd);
@@ -49,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent nou = new Intent(getApplicationContext(), EditionTask.class);
                 nou.putExtra("Tasca",tasks.get(position));
-
-                startActivityForResult(nou, 1);
+                // nou.putExtra("Position", position);
+                startActivityForResult(nou, 1 /* 2 */ );
+                //no entenc perque no me furula aixo
 
             }
         });
@@ -60,36 +62,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1){
-            if (resultCode == RESULT_OK){
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
                 String title = data.getStringExtra("title");
                 String description = data.getStringExtra("description");
-                tasks.add(new Task(2, title, description, false));
-
+                tasks.add(new Task(title, description, false));
                 Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida", Toast.LENGTH_SHORT);
                 toast.show();
 
                 adapter.notifyDataSetChanged();
 
-                if(getIntent().getExtras() != null) {
+            }
+        }
+
+        if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                String editarBt = getIntent().getStringExtra("ModificatString");
+                int position = Integer.parseInt(getIntent().getStringExtra("ModificatPosicio"));
+                String borrarBt = getIntent().getStringExtra("BorrarString");
+                int positionBorrar = Integer.parseInt(getIntent().getStringExtra("Borrar"));
+                if (editarBt == "Editar"){
+                    //if (tasks.get(position) == position)
                     Task tasca = (Task) getIntent().getSerializableExtra("Modificat");
-                    for (int i = 0; i < tasks.size(); i++) {
-                        Task task = tasks.get(i);
-                        if (tasca.getCodi() == task.getCodi()){
-                            task.setTitle(tasca.getTitle());
-                            task.setDescription(tasca.getDescription());
-                        }
+                    tasca.setTitle(tasca.getTitle());
+                    tasca.setDescription(tasca.getDescription());
                     }
-                }
-                if(getIntent().getExtras() != null) {
-                    String code = data.getStringExtra("Borrar");
-                    int cod = Integer.parseInt(code);
-                    for (int i = 0; i < tasks.size(); i++) {
-                        Task task = tasks.get(i);
-                        if (cod == task.getCodi()){
-                            tasks.remove(i);
-                        }
-                    }
+
+                if (borrarBt == "Borrar"){
+                    tasks.remove(positionBorrar);
                 }
             }
         }

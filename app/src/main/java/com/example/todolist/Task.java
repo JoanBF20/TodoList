@@ -3,24 +3,16 @@ package com.example.todolist;
 import java.io.Serializable;
 
 public class Task implements Serializable {
-    int codi;
+
     private String title;
     private String description;
     private boolean complete;
 
-    public Task(int codi, String title, String description, boolean complete) {
-        this.codi = codi;
+    public Task(String title, String description, boolean complete) {
+
         this.title = title;
         this.description = description;
         this.complete = complete;
-    }
-
-    public int getCodi() {
-        return codi;
-    }
-
-    public void setCodi(int codi) {
-        this.codi = codi;
     }
 
     public String getTitle() {
