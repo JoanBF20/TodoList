@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.io.Serializable;
 
 public class EditionTask extends AppCompatActivity {
@@ -41,10 +39,8 @@ public class EditionTask extends AppCompatActivity {
             public void onClick(View v) {
 
                 Task tasca = new Task(title.getText().toString(),description.getText().toString(),completat);
-                Gson json = new Gson();
-                String tascaEnviar = json.toJson(tasca);
                 Intent data = new Intent();
-                data.putExtra("ModificatObjecte",  tascaEnviar);
+                data.putExtra("Tasca",tasca);
                 data.putExtra("Accio", 1);
                 data.putExtra("Posicio", position);
                 setResult(RESULT_OK,data);

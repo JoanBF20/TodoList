@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
                     String recepcio = extras.getString("ModificatObjecte");
 
-                    Gson json = new Gson();
-                    Task tasca = json.fromJson(recepcio, Task.class);
+                    Task tasca = (Task) extras.getSerializable("Tasca");
                     Toast toast = Toast.makeText(getApplicationContext(), tasca.getTitle()+"", Toast.LENGTH_SHORT);
                     toast.show();
                     tasks.set(position, tasca);
