@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent nou = new Intent(getApplicationContext(), EditionTask.class);
                 nou.putExtra("Tasca",tasks.get(position));
-                // nou.putExtra("Position", position);
-                startActivityForResult(nou, 1 /* 2 */ );
+                nou.putExtra("Position", position);
+                startActivityForResult(nou,  2);
                 //no entenc perque no me furula aixo
 
             }
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
+
                 String title = data.getStringExtra("title");
                 String description = data.getStringExtra("description");
                 tasks.add(new Task(title, description, false));
@@ -75,23 +78,28 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == 2) {
-            if (resultCode == RESULT_OK) {
-                String editarBt = getIntent().getStringExtra("ModificatString");
-                int position = Integer.parseInt(getIntent().getStringExtra("ModificatPosicio"));
-                String borrarBt = getIntent().getStringExtra("BorrarString");
-                int positionBorrar = Integer.parseInt(getIntent().getStringExtra("Borrar"));
-                if (editarBt == "Editar"){
-                    //if (tasks.get(position) == position)
-                    Task tasca = (Task) getIntent().getSerializableExtra("Modificat");
-                    tasca.setTitle(tasca.getTitle());
-                    tasca.setDescription(tasca.getDescription());
-                    }
+        if (resultCode == RESULT_OK && requestCode == 2) {
+                Bundle extras = data.getExtras();
+                int position = extras.getInt("Posicio");
+                int accio = extras.getInt("Accio");
 
-                if (borrarBt == "Borrar"){
-                    tasks.remove(positionBorrar);
+                if (accio == 1){
+
+                    String recepcio = extras.getString("ModificatObjecte");
+
+                    Gson json = new Gson();
+                    Task tasca = json.fromJson(recepcio, Task.class);
+                    Toast toast = Toast.makeText(getApplicationContext(), tasca.getTitle()+"", Toast.LENGTH_SHORT);
+                    toast.show();
+                    tasks.set(position, tasca);
                 }
+
+                if (accio == 2){
+                    tasks.remove(position);
+                }
+
+                adapter.notifyDataSetChanged();
             }
         }
     }
-}
+
