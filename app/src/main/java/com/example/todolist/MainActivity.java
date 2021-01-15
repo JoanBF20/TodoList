@@ -1,18 +1,24 @@
 package com.example.todolist;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Paint;
 import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         tasks.add(new Task("Task 1", "Description of Task 1", false));
         tasks.add(new Task( "Task 2", "Description of Task 2", false));
 
-        ListView llista = (ListView) findViewById(R.id.listview);
+        final ListView llista = (ListView) findViewById(R.id.listview);
         adapter = new taskadapter(getApplicationContext(), R.layout.activity_main, tasks);
         llista.setAdapter((ListAdapter) adapter);
 
@@ -57,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     @Override
