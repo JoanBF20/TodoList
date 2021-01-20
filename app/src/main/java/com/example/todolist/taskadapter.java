@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 
 public class taskadapter extends ArrayAdapter {
@@ -55,6 +56,11 @@ public class taskadapter extends ArrayAdapter {
                             titol.setPaintFlags(titol.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                             titol.setText(checkTitol);
                             task.setComplete(true);
+
+                            tasks.remove(task);
+                            tasks.add(task);
+                            notifyDataSetChanged();
+
                         } else {
                             if ((titol.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0){
                                 titol.setPaintFlags( titol.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
