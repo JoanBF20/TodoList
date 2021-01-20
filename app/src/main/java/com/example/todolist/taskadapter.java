@@ -43,6 +43,8 @@ public class taskadapter extends ArrayAdapter {
         //omplim dades
         titol.setText(task.getTitle());
         complete.setChecked(task.isComplete());
+        if (task.isComplete())
+            titol.setPaintFlags(titol.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
 
         complete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -57,6 +59,7 @@ public class taskadapter extends ArrayAdapter {
                             if ((titol.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0){
                                 titol.setPaintFlags( titol.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                                 titol.setText(checkTitol);
+                                task.setComplete(false);
                             }
                         }
                     }
