@@ -52,6 +52,7 @@ public class taskadapter extends ArrayAdapter {
                         if (complete.isChecked()){
                             titol.setPaintFlags(titol.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                             titol.setText(checkTitol);
+                            task.setComplete(true);
                         } else {
                             if ((titol.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0){
                                 titol.setPaintFlags( titol.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));

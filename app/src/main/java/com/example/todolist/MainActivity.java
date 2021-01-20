@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
                 nou.putExtra("Tasca",tasks.get(position));
                 nou.putExtra("Position", position);
                 startActivityForResult(nou,  2);
-                //no entenc perque no me furula aixo
 
             }
         });
