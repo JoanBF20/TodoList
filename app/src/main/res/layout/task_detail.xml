@@ -26,13 +26,12 @@
         android:id="@+id/title"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="14dp"
         android:buttonTint="@color/colorPrimaryDark"
         android:text="TextView"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.824"
-        app:layout_constraintStart_toStartOf="@+id/complete"
+        app:layout_constraintStart_toEndOf="@+id/complete"
         app:layout_constraintTop_toTopOf="parent" />
 
 
