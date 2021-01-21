@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,6 +60,8 @@ public class taskadapter extends ArrayAdapter {
 
                             tasks.remove(task);
                             tasks.add(task);
+                            Toast toast = Toast.makeText(getContext(), "Tasca completada", Toast.LENGTH_SHORT);
+                            toast.show();
                             notifyDataSetChanged();
 
                         } else {
@@ -66,6 +69,12 @@ public class taskadapter extends ArrayAdapter {
                                 titol.setPaintFlags( titol.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                                 titol.setText(checkTitol);
                                 task.setComplete(false);
+
+                                tasks.remove(task);
+                                tasks.add(0, task);
+                                Toast toast = Toast.makeText(getContext(), "Tasca desmarcada", Toast.LENGTH_SHORT);
+                                toast.show();
+                                notifyDataSetChanged();
                             }
                         }
                     }
