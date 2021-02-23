@@ -32,7 +32,7 @@ public class addTask extends AppCompatActivity {
             public void onClick(View view){
                 bd = new DBInterface(getApplicationContext());
                 bd.obre();
-                if (bd.insereixTasca(titleText.getText().toString(), descriptionText.getText().toString(), 1) != -1) {
+                if (bd.insereixTasca(titleText.getText().toString(), descriptionText.getText().toString(), 1, false) != -1) {
                     Toast.makeText(getApplicationContext(), "Afegit correctament", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Error a l’afegir", Toast.LENGTH_SHORT).show();
