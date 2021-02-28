@@ -1,7 +1,9 @@
 package com.example.todolist;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Paint;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -11,28 +13,35 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-public class taskadapter extends ArrayAdapter {
+public class taskadapter extends ListActivity {
 
     private Context context;
     private List<Task> tasks;
+    private ListAdapter adapters;
 
     public taskadapter(@NonNull Context context, int resource, @NonNull List objects) {
-        super(context,resource,objects);
+        //super(context,resource,objects);
         this.context = context;
         this.tasks = objects;
+
+        llistaContactes();
     }
 
     /*Per col·locar cada un dels elements al layout*/
-    public View getView(final int position, View convertView, ViewGroup parent) {
+ /*   public View getView(final int position, View convertView, ViewGroup parent) {
         //agafam el la posicio
         final Task task = tasks.get(position);
         //agafam el layout per omplir-lo
@@ -81,6 +90,27 @@ public class taskadapter extends ArrayAdapter {
                 });
 
         return view;
+    }*/
+
+    public void llistaContactes() {
+        DBInterface bd;
+        bd = new DBInterface(this); bd.obre();
+        Cursor c = bd.obtenirTotesLesTasques(); c.moveToFirst();
+        ArrayList<HashMap<String, String>> llista = new ArrayList<HashMap<String, String>>();
+        while (!c.isAfterLast()) {
+            HashMap<String, String> map = new HashMap<String, String>();
+            map.put("title",c.getString(0));
+            map.put("description",c.getString(1));
+            map.put("complete",c.getString(2));
+            llista.add(map);
+            c.moveToNext();
+        }
+        bd.tanca();
+        adapters = new SimpleAdapter(this, llista,R.layout.task_detail,
+                new String[] { "title", "description","complete" }, new int[] {R.id.title, R.id.description, R.id.complete});
+        setListAdapter(adapters);
     }
 
+    public void notifyDataSetChanged() {
+    }
 }

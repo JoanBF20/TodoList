@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
 import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +31,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     public static List<Task> tasks = new ArrayList<Task>();
-    taskadapter adapter;
+    public taskadapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,5 +141,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         saveData();
     }
+
+
 }
 
