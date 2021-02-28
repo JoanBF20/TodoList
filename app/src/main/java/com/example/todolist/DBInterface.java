@@ -16,6 +16,7 @@ public class DBInterface {
     public static final String CLAU_TASK_ID = "_id";
     public static final String CLAU_TASK_TITOL = "titol";
     public static final String CLAU_TAK_DESCRIPCIO = "descripcio";
+    public static final String CLAU_TASK_COMPLETADA = "completada";
     public static final String CLAU_TASK_CATEGORIA = "id_categoria";
 
     public static final String CLAU_CAT_ID = "_id";
@@ -37,6 +38,7 @@ public class DBInterface {
             CLAU_TASK_TITOL + " TEXT NOT NULL, " +
             CLAU_TAK_DESCRIPCIO + " TEXT, " +
             CLAU_TASK_CATEGORIA + " integer, " +
+            CLAU_TASK_COMPLETADA + " TEXT, " +
             "FOREIGN KEY ("+CLAU_TASK_CATEGORIA+") REFERENCES "+BD_CAT_TAULA+"("+CLAU_CAT_ID+")" + ");";
 
     public static final String BD_CAT_CREATE = "create table " +BD_CAT_TAULA +
@@ -63,11 +65,12 @@ public class DBInterface {
         ajuda.close();
     }
 
-    public long insereixTasca(String titol, String descripcio, int categoria) {
+    public long insereixTasca(String titol, String descripcio, int categoria, boolean completada) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(CLAU_TASK_TITOL, titol);
         initialValues.put(CLAU_TAK_DESCRIPCIO, descripcio);
         initialValues.put(CLAU_TASK_CATEGORIA, categoria);
+        initialValues.put(CLAU_TASK_COMPLETADA, completada);
         return bd.insert(BD_TASK_TAULA ,null, initialValues);
     }
 
@@ -98,7 +101,7 @@ public class DBInterface {
     }
 
     public Cursor obtenirTasca(long IDFila) throws SQLException {
-        Cursor mCursor = bd.query(true, BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA},CLAU_TASK_ID + " = " + IDFila, null, null, null, null, null);
+        Cursor mCursor = bd.query(true, BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA,CLAU_TASK_COMPLETADA},CLAU_TASK_ID + " = " + IDFila, null, null, null, null, null);
         if(mCursor != null) {
             mCursor.moveToFirst();
         }
@@ -110,7 +113,7 @@ public class DBInterface {
     }
 
     public Cursor obtenirTotesLesTasques() {
-        return bd.query(BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA}, null,null, null, null, null);
+        return bd.query(BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA,CLAU_TASK_COMPLETADA}, null,null, null, null, null);
     }
 
     public boolean actualitzarCategoria(long IDFila, String titol, Bitmap imatge) {
@@ -123,11 +126,12 @@ public class DBInterface {
         return bd.update(BD_CAT_TAULA, args, CLAU_CAT_ID + " = " + IDFila, null) > 0;
     }
 
-    public boolean actualitzarTasca(long IDFila, String titol, String descripcio, int categoria) {
+    public boolean actualitzarTasca(long IDFila, String titol, String descripcio, int categoria,boolean completada) {
         ContentValues args = new ContentValues();
         args.put(CLAU_TASK_TITOL, titol);
         args.put(CLAU_TAK_DESCRIPCIO, descripcio);
         args.put(CLAU_TASK_CATEGORIA, categoria);
+        args.put(CLAU_TASK_COMPLETADA, completada);
         return bd.update(BD_TASK_TAULA, args, CLAU_TASK_ID + " = " + IDFila, null) > 0;
     }
 
