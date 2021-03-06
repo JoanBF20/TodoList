@@ -24,7 +24,7 @@ public class addCategories extends AppCompatActivity {
 
         titleText = (EditText) this.findViewById(R.id.titol);
         img = (ImageView) this.findViewById(R.id.imatge);
-        
+
 
         btnAfegir = (Button) findViewById(R.id.addButton);
         btnAfegir.setOnClickListener(new View.OnClickListener(){
