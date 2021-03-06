@@ -53,4 +53,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="265dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="39dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

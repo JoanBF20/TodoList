@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +39,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 
     public static List<Task> tasks = new ArrayList<Task>();
+    public static List<Category> categories = new ArrayList<Category>();
     public taskadapter adapter;
     public  Context context;
     DBInterface db;
@@ -50,6 +53,13 @@ public class MainActivity extends AppCompatActivity{
         db = new DBInterface(context);
         db.obre();
         tasks = db.obtenirTotesLesTasques();
+        categories = db.obtenirTotesLesCategories();
+        if (categories.size() < 1){
+            db.insereixCategoria("Negocis",BitmapFactory.decodeResource(getResources(),R.drawable.business));
+            db.insereixCategoria("Casa",BitmapFactory.decodeResource(getResources(),R.drawable.home));
+            db.insereixCategoria("Estudis",BitmapFactory.decodeResource(getResources(),R.drawable.study));
+            categories = db.obtenirTotesLesCategories();
+        }
         final ListView llista = (ListView) findViewById(R.id.listview);
         adapter = new taskadapter(context, R.layout.activity_main, tasks);
         llista.setAdapter((ListAdapter) adapter);
@@ -72,6 +82,14 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });
+    }
+
+    public static Category getCategory(int categoryId){
+        for (Category category : categories)
+            if (category.getId() == categoryId)
+                return category;
+
+        return null;
     }
 
 /*    private void saveData() {
@@ -104,11 +122,12 @@ public class MainActivity extends AppCompatActivity{
 
                 String title = data.getStringExtra("title");
                 String description = data.getStringExtra("description");
-                db.insereixTasca(title, description, 1, false);
+                int categoryPosition = data.getIntExtra("categoryPosition",0);
+                db.insereixTasca(title, description, categories.get(categoryPosition).getId(), false);
                 tasks.clear();
                 tasks.addAll(db.obtenirTotesLesTasques());
                 adapter.notifyDataSetChanged();
-                Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida "+title, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }

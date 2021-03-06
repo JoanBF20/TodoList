@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -93,12 +94,12 @@ public class DBInterface {
         return bd.delete(BD_TASK_TAULA, CLAU_TASK_ID + " = " + IDFila, null) > 0;
     }
 
-    public Cursor obtenirCategoria(long IDFila) throws SQLException {
+    public Category obtenirCategoria(long IDFila) throws SQLException {
         Cursor mCursor = bd.query(true, BD_CAT_TAULA, new String[] {CLAU_CAT_ID, CLAU_CAT_TITOL,CLAU_CAT_IMATGE},CLAU_CAT_ID + " = " + IDFila, null, null, null, null, null);
         if(mCursor != null) {
             mCursor.moveToFirst();
         }
-        return mCursor;
+        return cursorToCategoriesList(mCursor).get(0);
     }
 
     public Task obtenirTasca(long IDFila) throws SQLException {
@@ -109,8 +110,9 @@ public class DBInterface {
         return cursorToTasksList(mCursor).get(0);
     }
 
-    public Cursor obtenirTotesLesCategories() {
-        return bd.query(BD_CAT_TAULA, new String[] {CLAU_CAT_ID, CLAU_CAT_TITOL,CLAU_CAT_IMATGE}, null,null, null, null, null);
+    public ArrayList<Category> obtenirTotesLesCategories() {
+        Cursor cursor = bd.query(BD_CAT_TAULA, new String[] {CLAU_CAT_ID, CLAU_CAT_TITOL,CLAU_CAT_IMATGE}, null,null, null, null, null);
+        return cursorToCategoriesList(cursor);
     }
 
     public ArrayList<Task> obtenirTotesLesTasques() {
@@ -135,6 +137,28 @@ public class DBInterface {
         args.put(CLAU_TASK_CATEGORIA, categoria);
         args.put(CLAU_TASK_COMPLETADA, booleanToNumeric(completada));
         return bd.update(BD_TASK_TAULA, args, CLAU_TASK_ID + " = " + IDFila, null) > 0;
+    }
+
+    public ArrayList<Category> cursorToCategoriesList(Cursor cursor){
+        ArrayList<Category> categories = new ArrayList<Category>();
+        if (cursor != null && cursor.moveToFirst()) {
+
+            int id = cursor.getColumnIndex(CLAU_CAT_ID);
+            int titol = cursor.getColumnIndex(CLAU_CAT_TITOL);
+            int imatge = cursor.getColumnIndex(CLAU_CAT_IMATGE);
+
+            do {
+                int thisId = cursor.getInt(id);
+                String thisTitol = cursor.getString(titol);
+                byte[] byteImage = cursor.getBlob(imatge);
+                Bitmap ThisImatge = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
+
+                categories.add(new Category(thisId, thisTitol, ThisImatge));
+            }
+            while (cursor.moveToNext());
+            cursor.close();
+        }
+        return categories;
     }
 
     public ArrayList<Task> cursorToTasksList(Cursor cursor){

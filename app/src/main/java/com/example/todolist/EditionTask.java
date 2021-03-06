@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditionTask extends AppCompatActivity {
 
@@ -36,7 +40,23 @@ public class EditionTask extends AppCompatActivity {
         final EditText title = (EditText) findViewById(R.id.title);
         final EditText description = (EditText) findViewById(R.id.description);
 
+        final Spinner categoriaSpinner = (Spinner) this.findViewById(R.id.category);
+
+        List<String> spinnerArray = new ArrayList<String>();
+        for (Category category: MainActivity.categories)
+            spinnerArray.add(category.title);
+
+        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                spinnerArray);
+
+        categoriaSpinner.setAdapter(spinnerArrayAdapter);
+
         //omplim les dades
+        for (Category category: MainActivity.categories)
+            if (category.getId() == tasca.getIdCategoria())
+                categoriaSpinner.setSelection(MainActivity.categories.indexOf(category));
+
         title.setText(tasca.getTitle());
         description.setText(tasca.getDescription());
 
@@ -47,6 +67,7 @@ public class EditionTask extends AppCompatActivity {
                 Intent data = new Intent();
                 tasca.setTitle(title.getText().toString());
                 tasca.setDescription(description.getText().toString());
+                tasca.setIdCategoria(MainActivity.categories.get(categoriaSpinner.getSelectedItemPosition()).getId());
                 data.putExtra("Tasca",tasca);
                 data.putExtra("Accio", 1);
                 data.putExtra("Id", id);
