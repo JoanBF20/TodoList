@@ -14,7 +14,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class addTask extends AppCompatActivity {
 
-    private DBInterface bd;
     private EditText titleText, descriptionText;
     private Button btnAfegir;
 
@@ -23,21 +22,18 @@ public class addTask extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
-        titleText = (EditText) this.findViewById(R.id.editTextTextPersonName);
-        descriptionText = (EditText) this.findViewById(R.id.editTextTextMultiLine);
+        final EditText titleText = (EditText) this.findViewById(R.id.editTextTextPersonName);
+        final EditText descriptionText = (EditText) this.findViewById(R.id.editTextTextMultiLine);
 
-        btnAfegir = (Button) findViewById(R.id.addButton);
-        btnAfegir.setOnClickListener(new View.OnClickListener(){
-
-            public void onClick(View view){
-                bd = new DBInterface(getApplicationContext());
-                bd.obre();
-                if (bd.insereixTasca(titleText.getText().toString(), descriptionText.getText().toString(), 1, false) != -1) {
-                    Toast.makeText(getApplicationContext(), "Afegit correctament", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error a l’afegir", Toast.LENGTH_SHORT).show();
-                }
-                bd.tanca();
+        Button myFab = (Button) this.findViewById(R.id.addButton);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent resultIntent = new Intent();
+                String title = titleText.getText().toString();
+                resultIntent.putExtra("title", title);
+                String description = descriptionText.getText().toString();
+                resultIntent.putExtra("description", description);
+                setResult(RESULT_OK, resultIntent);
                 finish();
             }
         });

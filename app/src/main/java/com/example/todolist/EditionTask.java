@@ -14,16 +14,22 @@ import java.io.Serializable;
 
 public class EditionTask extends AppCompatActivity {
 
+    Task tasca;
+    DBInterface db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edition_task);
 
+        db = new DBInterface(getApplicationContext());
+        db.obre();
+
         //Recollir informació del Intent i mostrar-la
         Intent intent = getIntent();
-        final int position = intent.getIntExtra("Position",0);
+        final int id = intent.getIntExtra("Id",0);
 
-        Task tasca = (Task) intent.getSerializableExtra("Tasca");
+        tasca = db.obtenirTasca(id);
         final boolean completat = tasca.isComplete();
 
         //instanciam cada element del layout a utilitzar
@@ -38,11 +44,12 @@ public class EditionTask extends AppCompatActivity {
         guardar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Task tasca = new Task(title.getText().toString(),description.getText().toString(),completat);
                 Intent data = new Intent();
+                tasca.setTitle(title.getText().toString());
+                tasca.setDescription(description.getText().toString());
                 data.putExtra("Tasca",tasca);
                 data.putExtra("Accio", 1);
-                data.putExtra("Posicio", position);
+                data.putExtra("Id", id);
                 setResult(RESULT_OK,data);
                 finish();
             }
@@ -53,7 +60,7 @@ public class EditionTask extends AppCompatActivity {
             public void onClick(View v) {
                 Intent data = new Intent();
                 String boto2 = "Borrar";
-                data.putExtra("Posicio", position);
+                data.putExtra("Id", tasca.getId());
                 data.putExtra("Accio", 2);
                 setResult(RESULT_OK,data);
                 finish();

@@ -38,17 +38,20 @@ public class MainActivity extends AppCompatActivity{
 
     public static List<Task> tasks = new ArrayList<Task>();
     public taskadapter adapter;
+    public  Context context;
+    DBInterface db;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        loadData();
-
+        context = getApplicationContext();
+        db = new DBInterface(context);
+        db.obre();
+        tasks = db.obtenirTotesLesTasques();
         final ListView llista = (ListView) findViewById(R.id.listview);
-        adapter = new taskadapter(getApplicationContext(), R.layout.activity_main, tasks);
+        adapter = new taskadapter(context, R.layout.activity_main, tasks);
         llista.setAdapter((ListAdapter) adapter);
 
         FloatingActionButton myFab = (FloatingActionButton) this.findViewById(R.id.floatingAdd);
@@ -64,16 +67,14 @@ public class MainActivity extends AppCompatActivity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent nou = new Intent(getApplicationContext(), EditionTask.class);
-                nou.putExtra("Tasca", tasks.get(position));
-                nou.putExtra("Position", position);
+                nou.putExtra("Id", tasks.get(position).getId());
                 startActivityForResult(nou, 2);
 
             }
         });
-
     }
 
-    private void saveData() {
+/*    private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity{
         if (tasks == null) {
             tasks = new ArrayList<>();
         }
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -103,17 +104,18 @@ public class MainActivity extends AppCompatActivity{
 
                 String title = data.getStringExtra("title");
                 String description = data.getStringExtra("description");
-                tasks.add(0, new Task(title, description, false));
-                Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida", Toast.LENGTH_SHORT);
-                toast.show();
-
+                db.insereixTasca(title, description, 1, false);
+                tasks.clear();
+                tasks.addAll(db.obtenirTotesLesTasques());
                 adapter.notifyDataSetChanged();
+                Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida "+title, Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
 
         if (resultCode == RESULT_OK && requestCode == 2) {
             Bundle extras = data.getExtras();
-            int position = extras.getInt("Posicio");
+            int id = extras.getInt("Id");
             int accio = extras.getInt("Accio");
 
             if (accio == 1) {
@@ -123,15 +125,17 @@ public class MainActivity extends AppCompatActivity{
                 Task tasca = (Task) extras.getSerializable("Tasca");
                 Toast toast = Toast.makeText(getApplicationContext(), "Tasca modificada", Toast.LENGTH_SHORT);
                 toast.show();
-                tasks.set(position, tasca);
+                db.actualitzarTasca(tasca.getId(),tasca.getTitle(),tasca.getDescription(),tasca.getIdCategoria(),tasca.isComplete());
             }
 
             if (accio == 2) {
-                tasks.remove(position);
+                db.esborraTasca(id);
                 Toast toast = Toast.makeText(getApplicationContext(), "Tasca eliminada", Toast.LENGTH_SHORT);
                 toast.show();
             }
 
+            tasks.clear();
+            tasks.addAll(db.obtenirTotesLesTasques());
             adapter.notifyDataSetChanged();
         }
     }
@@ -139,9 +143,8 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        saveData();
+        //saveData();
     }
-
 
 }
 

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 public class DBInterface {
     //Declaració de constants
@@ -38,7 +39,7 @@ public class DBInterface {
             CLAU_TASK_TITOL + " TEXT NOT NULL, " +
             CLAU_TAK_DESCRIPCIO + " TEXT, " +
             CLAU_TASK_CATEGORIA + " integer, " +
-            CLAU_TASK_COMPLETADA + " TEXT, " +
+            CLAU_TASK_COMPLETADA + " integer, " +
             "FOREIGN KEY ("+CLAU_TASK_CATEGORIA+") REFERENCES "+BD_CAT_TAULA+"("+CLAU_CAT_ID+")" + ");";
 
     public static final String BD_CAT_CREATE = "create table " +BD_CAT_TAULA +
@@ -70,7 +71,7 @@ public class DBInterface {
         initialValues.put(CLAU_TASK_TITOL, titol);
         initialValues.put(CLAU_TAK_DESCRIPCIO, descripcio);
         initialValues.put(CLAU_TASK_CATEGORIA, categoria);
-        initialValues.put(CLAU_TASK_COMPLETADA, completada);
+        initialValues.put(CLAU_TASK_COMPLETADA, booleanToNumeric(completada));
         return bd.insert(BD_TASK_TAULA ,null, initialValues);
     }
 
@@ -100,20 +101,21 @@ public class DBInterface {
         return mCursor;
     }
 
-    public Cursor obtenirTasca(long IDFila) throws SQLException {
+    public Task obtenirTasca(long IDFila) throws SQLException {
         Cursor mCursor = bd.query(true, BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA,CLAU_TASK_COMPLETADA},CLAU_TASK_ID + " = " + IDFila, null, null, null, null, null);
         if(mCursor != null) {
             mCursor.moveToFirst();
         }
-        return mCursor;
+        return cursorToTasksList(mCursor).get(0);
     }
 
     public Cursor obtenirTotesLesCategories() {
         return bd.query(BD_CAT_TAULA, new String[] {CLAU_CAT_ID, CLAU_CAT_TITOL,CLAU_CAT_IMATGE}, null,null, null, null, null);
     }
 
-    public Cursor obtenirTotesLesTasques() {
-        return bd.query(BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA,CLAU_TASK_COMPLETADA}, null,null, null, null, null);
+    public ArrayList<Task> obtenirTotesLesTasques() {
+        Cursor cursor = bd.query(BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA,CLAU_TASK_COMPLETADA}, null,null, null, null, null);
+        return cursorToTasksList(cursor);
     }
 
     public boolean actualitzarCategoria(long IDFila, String titol, Bitmap imatge) {
@@ -131,8 +133,49 @@ public class DBInterface {
         args.put(CLAU_TASK_TITOL, titol);
         args.put(CLAU_TAK_DESCRIPCIO, descripcio);
         args.put(CLAU_TASK_CATEGORIA, categoria);
-        args.put(CLAU_TASK_COMPLETADA, completada);
+        args.put(CLAU_TASK_COMPLETADA, booleanToNumeric(completada));
         return bd.update(BD_TASK_TAULA, args, CLAU_TASK_ID + " = " + IDFila, null) > 0;
+    }
+
+    public ArrayList<Task> cursorToTasksList(Cursor cursor){
+        ArrayList<Task> tasks = new ArrayList<Task>();
+        if (cursor != null && cursor.moveToFirst()) {
+
+            int id = cursor.getColumnIndex(CLAU_TASK_ID);
+            int id_categoria = cursor.getColumnIndex(CLAU_TASK_CATEGORIA);
+            int titol = cursor.getColumnIndex(CLAU_TASK_TITOL);
+            int descripcio = cursor.getColumnIndex(CLAU_TAK_DESCRIPCIO);
+            int completada = cursor.getColumnIndex(CLAU_TASK_COMPLETADA);
+
+            do {
+                int thisId = cursor.getInt(id);
+                String thisTitol = cursor.getString(titol);
+                String ThisDescripcio = cursor.getString(descripcio);
+                int thisIdCategoria = cursor.getInt(id_categoria);
+                boolean thisCompletada = numericToBoolean(cursor.getInt(completada));
+
+                tasks.add(new Task(thisId, thisTitol, ThisDescripcio, thisIdCategoria, thisCompletada));
+            }
+            while (cursor.moveToNext());
+            cursor.close();
+        }
+        return tasks;
+    }
+
+    public int booleanToNumeric(boolean bool){
+        if (bool){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean numericToBoolean(int num){
+        if (num == 0){
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private class AjudaDB extends SQLiteOpenHelper {
