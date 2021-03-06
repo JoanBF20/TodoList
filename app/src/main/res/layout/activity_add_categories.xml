@@ -51,7 +51,7 @@
         app:layout_constraintVertical_bias="0.082" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/afegir"
         android:layout_width="198dp"
         android:layout_height="78dp"
         android:background="#9C27B0"
