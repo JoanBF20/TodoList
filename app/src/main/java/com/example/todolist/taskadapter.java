@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -51,10 +52,12 @@ public class taskadapter extends ArrayAdapter {
         //instanciam cada element
         final TextView titol = (TextView) view.findViewById(R.id.title);
         final CheckBox complete = (CheckBox) view.findViewById(R.id.complete);
+        final ImageView image = (ImageView) view.findViewById(R.id.imageView);
 
         //omplim dades
         titol.setText(task.getTitle());
         complete.setChecked(task.isComplete());
+        image.setImageBitmap(MainActivity.getCategory(task.getIdCategoria()).getImage());
         if (task.isComplete())
             titol.setPaintFlags(titol.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
 
@@ -69,8 +72,8 @@ public class taskadapter extends ArrayAdapter {
                             task.setComplete(true);
                             db.actualitzarTasca(task.getId(),task.getTitle(),task.getDescription(),task.getIdCategoria(),true);
 
-                            tasks.remove(task);
-                            tasks.add(task);
+                            tasks.clear();
+                            tasks.addAll(db.obtenirTotesLesTasques());
                             Toast toast = Toast.makeText(getContext(), "Tasca completada", Toast.LENGTH_SHORT);
                             toast.show();
                             notifyDataSetChanged();
@@ -82,8 +85,8 @@ public class taskadapter extends ArrayAdapter {
                                 task.setComplete(false);
                                 db.actualitzarTasca(task.getId(),task.getTitle(),task.getDescription(),task.getIdCategoria(),false);
 
-                                tasks.remove(task);
-                                tasks.add(0, task);
+                                tasks.clear();
+                                tasks.addAll(db.obtenirTotesLesTasques());
                                 Toast toast = Toast.makeText(getContext(), "Tasca desmarcada", Toast.LENGTH_SHORT);
                                 toast.show();
                                 notifyDataSetChanged();
