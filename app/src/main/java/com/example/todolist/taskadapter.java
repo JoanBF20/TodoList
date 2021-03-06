@@ -94,8 +94,10 @@ public class taskadapter extends ListActivity {
 
     public void llistaContactes() {
         DBInterface bd;
-        bd = new DBInterface(this); bd.obre();
-        Cursor c = bd.obtenirTotesLesTasques(); c.moveToFirst();
+        bd = new DBInterface(this);
+        bd.obre();
+        Cursor c = bd.obtenirTotesLesTasques();
+        c.moveToFirst();
         ArrayList<HashMap<String, String>> llista = new ArrayList<HashMap<String, String>>();
         while (!c.isAfterLast()) {
             HashMap<String, String> map = new HashMap<String, String>();
