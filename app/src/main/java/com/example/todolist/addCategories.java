@@ -34,6 +34,7 @@ public class addCategories extends AppCompatActivity {
         img.buildDrawingCache();
         bitmap = Bitmap.createBitmap(img.getDrawingCache());
 
+        //aixo es per quan pitgen
         btnAfegir = (Button) findViewById(R.id.afegir);
         btnAfegir.setOnClickListener(new View.OnClickListener(){
 
