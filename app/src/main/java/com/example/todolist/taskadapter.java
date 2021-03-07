@@ -72,8 +72,7 @@ public class taskadapter extends ArrayAdapter {
                             task.setComplete(true);
                             db.actualitzarTasca(task.getId(),task.getTitle(),task.getDescription(),task.getIdCategoria(),true);
 
-                            tasks.clear();
-                            tasks.addAll(db.obtenirTotesLesTasques());
+                            MainActivity.updateAdapter();
                             Toast toast = Toast.makeText(getContext(), "Tasca completada", Toast.LENGTH_SHORT);
                             toast.show();
                             notifyDataSetChanged();
@@ -85,8 +84,7 @@ public class taskadapter extends ArrayAdapter {
                                 task.setComplete(false);
                                 db.actualitzarTasca(task.getId(),task.getTitle(),task.getDescription(),task.getIdCategoria(),false);
 
-                                tasks.clear();
-                                tasks.addAll(db.obtenirTotesLesTasques());
+                                MainActivity.updateAdapter();
                                 Toast toast = Toast.makeText(getContext(), "Tasca desmarcada", Toast.LENGTH_SHORT);
                                 toast.show();
                                 notifyDataSetChanged();

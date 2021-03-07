@@ -94,10 +94,7 @@ public class addCategories extends AppCompatActivity{
                             Toast.makeText(getApplicationContext(), "Error a l’afegir", Toast.LENGTH_SHORT).show();
                         }
 
-                        MainActivity.tasks.clear();
-                        MainActivity.tasks.addAll(bd.obtenirTotesLesTasques());
-                        MainActivity.categories.clear();
-                        MainActivity.categories.addAll(bd.obtenirTotesLesCategories());
+                       MainActivity.updateAdapter();
                         bd.tanca();
                         finish();
                     }

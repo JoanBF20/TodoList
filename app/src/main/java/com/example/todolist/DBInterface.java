@@ -110,6 +110,14 @@ public class DBInterface {
         return cursorToTasksList(mCursor).get(0);
     }
 
+    public ArrayList<Task> obtenirTotesLesTasquesCastegoria(int IDCategoria) throws SQLException {
+        Cursor mCursor = bd.query(true, BD_TASK_TAULA, new String[] {CLAU_TASK_ID, CLAU_TASK_TITOL,CLAU_TAK_DESCRIPCIO,CLAU_TASK_CATEGORIA,CLAU_TASK_COMPLETADA},CLAU_TASK_CATEGORIA + " = " + IDCategoria, null, null, null, null, null);
+        if(mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return cursorToTasksList(mCursor);
+    }
+
     public ArrayList<Category> obtenirTotesLesCategories() {
         Cursor cursor = bd.query(BD_CAT_TAULA, new String[] {CLAU_CAT_ID, CLAU_CAT_TITOL,CLAU_CAT_IMATGE}, null,null, null, null, null);
         return cursorToCategoriesList(cursor);
@@ -178,7 +186,12 @@ public class DBInterface {
                 int thisIdCategoria = cursor.getInt(id_categoria);
                 boolean thisCompletada = numericToBoolean(cursor.getInt(completada));
 
-                tasks.add(new Task(thisId, thisTitol, ThisDescripcio, thisIdCategoria, thisCompletada));
+                Task task = new Task(thisId, thisTitol, ThisDescripcio, thisIdCategoria, thisCompletada);
+                if (task.isComplete()){
+                    tasks.add(task);
+                } else {
+                    tasks.add(0,task);
+                }
             }
             while (cursor.moveToNext());
             cursor.close();

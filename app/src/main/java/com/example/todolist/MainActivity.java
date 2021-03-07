@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,10 +42,10 @@ public class MainActivity extends AppCompatActivity{
 
     public static List<Task> tasks = new ArrayList<Task>();
     public static List<Category> categories = new ArrayList<Category>();
-    public taskadapter adapter;
+    public static taskadapter adapter;
     public  Context context;
-    DBInterface db;
-
+    public static DBInterface db;
+    private static Spinner categoriaSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,34 @@ public class MainActivity extends AppCompatActivity{
         final ListView llista = (ListView) findViewById(R.id.listview);
         adapter = new taskadapter(context, R.layout.activity_main, tasks);
         llista.setAdapter((ListAdapter) adapter);
+
+        categoriaSpinner = (Spinner) this.findViewById(R.id.filtreCategories);
+
+        List<String> spinnerArray = new ArrayList<String>();
+        spinnerArray.add("Totes");
+        for (Category category: MainActivity.categories)
+            spinnerArray.add(category.title);
+
+        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                spinnerArray);
+
+        categoriaSpinner.setAdapter(spinnerArrayAdapter);
+
+        categoriaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                updateAdapter();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                updateAdapter();
+            }
+
+        });
+
+        loadData();
 
         FloatingActionButton myFab = (FloatingActionButton) this.findViewById(R.id.floatingAdd);
         myFab.setOnClickListener(new View.OnClickListener() {
@@ -100,26 +130,31 @@ public class MainActivity extends AppCompatActivity{
         return null;
     }
 
-/*    private void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(tasks);
-        editor.putString("task list", json);
-        editor.apply();
+    private void saveData() {
+        SharedPreferences sp = getSharedPreferences("todolist", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("spinnerPos", categoriaSpinner.getSelectedItemPosition());
+        editor.commit();
     }
 
     private void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("task list", null);
-        Type type = new TypeToken<ArrayList<Task>>() {
-        }.getType();
-        tasks = gson.fromJson(json, type);
-        if (tasks == null) {
-            tasks = new ArrayList<>();
+        SharedPreferences sp = getSharedPreferences("todolist", Activity.MODE_PRIVATE);
+        int pos = sp.getInt("spinnerPos", -1);
+        categoriaSpinner.setSelection(pos);
+    }
+
+    public static void updateAdapter() {
+        if (categoriaSpinner.getSelectedItemPosition() == 0){
+            tasks.clear();
+            tasks.addAll(db.obtenirTotesLesTasques());
+        } else {
+            tasks.clear();
+            tasks.addAll(db.obtenirTotesLesTasquesCastegoria(categories.get(categoriaSpinner.getSelectedItemPosition()-1).getId()));
         }
-    }*/
+        categories.clear();
+        categories.addAll(db.obtenirTotesLesCategories());
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -132,9 +167,7 @@ public class MainActivity extends AppCompatActivity{
                 String description = data.getStringExtra("description");
                 int categoryPosition = data.getIntExtra("categoryPosition",0);
                 db.insereixTasca(title, description, categories.get(categoryPosition).getId(), false);
-                tasks.clear();
-                tasks.addAll(db.obtenirTotesLesTasques());
-                adapter.notifyDataSetChanged();
+                updateAdapter();
                 Toast toast = Toast.makeText(getApplicationContext(), "Tasca afegida", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -161,16 +194,14 @@ public class MainActivity extends AppCompatActivity{
                 toast.show();
             }
 
-            tasks.clear();
-            tasks.addAll(db.obtenirTotesLesTasques());
-            adapter.notifyDataSetChanged();
+            updateAdapter();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //saveData();
+        saveData();
     }
 
 }
