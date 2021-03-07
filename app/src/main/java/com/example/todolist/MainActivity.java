@@ -72,6 +72,14 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        FloatingActionButton myFabCategory = (FloatingActionButton) this.findViewById(R.id.floatAddCategory);
+        myFabCategory.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, addCategories.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+
         llista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
